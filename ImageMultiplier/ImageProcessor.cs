@@ -17,10 +17,10 @@ namespace ImageMultiplier
 	/// </summary>
 	public class ImageProcessor
 	{
-		private readonly IProgressMonitor monitor;
+		private readonly ProgressMonitor monitor;
 		private readonly SingleFileCustomToolResult result;
 
-		public ImageProcessor (IProgressMonitor monitor, SingleFileCustomToolResult result)
+		public ImageProcessor (ProgressMonitor monitor, SingleFileCustomToolResult result)
 		{
 			this.monitor = monitor;
 			this.result = result;
