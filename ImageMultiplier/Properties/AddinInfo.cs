@@ -5,7 +5,7 @@ using Mono.Addins.Description;
 [assembly:Addin (
 	"ImageMultiplier", 
 	Namespace = "ImageMultiplier",
-	Version = "1.3.8"
+	Version = "1.3.9"
 )]
 
 [assembly:AddinName ("ImageMultiplier")]

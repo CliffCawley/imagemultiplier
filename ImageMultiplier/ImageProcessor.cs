@@ -61,47 +61,71 @@ namespace ImageMultiplier
 				//Create Directory if it doesn't exist
 				outputInfo.Directory.Create ();
 
-				if (!outputInfo.Exists) {
-					monitor.Log.WriteLine ("   --> PNG is new : " + outputPath);
-				} else if (outputInfo.LastWriteTimeUtc > inputInfo.LastWriteTimeUtc) {
-					monitor.Log.WriteLine ("   --> PNG is up-to-date: " + outputPath);        // Assumes color, size are in the file name so no changes there
-					return;
-				} else {
-					// Assumes color, size are in the file name so no changes there
-					monitor.Log.WriteLine ("   --> PNG is older: " + outputPath + " " + (inputInfo.LastWriteTimeUtc - outputInfo.LastWriteTimeUtc).TotalMinutes + " minutes");
-				}
+
 
 				// Open a separate copy of the SVG file for each outputter as we will modify height and width
-				var svgDocument = SvgDocument.Open (svgFile);
-				if (svgDocument == null) {
-					result.Errors.Add (new CompilerError (svgFile, lineNumber, 1, "Err3", "Could not open SvgDocument " + svgFile));
+				var svgDocument = SvgDocument.Open(svgFile);
+				if (svgDocument == null)
+				{
+					result.Errors.Add(new CompilerError(svgFile, lineNumber, 1, "Err3", "Could not open SvgDocument " + svgFile));
 					return;
 				}
-					
+
 				var OrigionalWidth = svgDocument.Bounds.Width;
 				var OrigionalHeight = svgDocument.Bounds.Height;
 				int? NewWidth = null;
 				int? NewHeight = null;
 
 				//Set Width and Height
-				if (outputter.width != null && outputter.height != null) {
+				if (outputter.width != null && outputter.height != null)
+				{
 					NewWidth = outputter.width;
 					NewHeight = outputter.height;
-				} else if (outputter.width != null) {
+				}
+				else if (outputter.width != null)
+				{
 					NewWidth = outputter.width;
-					NewHeight = (int)Math.Round ((decimal)(OrigionalHeight * (outputter.width / OrigionalWidth)));	
-				} else if (outputter.height != null) {
+					NewHeight = (int)Math.Round((decimal)(OrigionalHeight * (outputter.width / OrigionalWidth)));
+				}
+				else if (outputter.height != null)
+				{
 					NewWidth = outputter.height;
-					NewHeight = (int)Math.Round ((decimal)(OrigionalWidth * (outputter.height / OrigionalHeight)));
-				} else {
-					NewWidth = (int)Math.Round (OrigionalWidth);
-					NewHeight = (int)Math.Round (OrigionalHeight);
+					NewHeight = (int)Math.Round((decimal)(OrigionalWidth * (outputter.height / OrigionalHeight)));
+				}
+				else {
+					NewWidth = (int)Math.Round(OrigionalWidth);
+					NewHeight = (int)Math.Round(OrigionalHeight);
 				}
 
 				//Scale the Image
-				if (outputter.scaling != null) {
-					NewWidth = (int)Math.Round ((decimal)(NewWidth * outputter.scaling));
-					NewHeight = (int)Math.Round ((decimal)(NewHeight * outputter.scaling));
+				if (outputter.scaling != null)
+				{
+					NewWidth = (int)Math.Round((decimal)(NewWidth * outputter.scaling));
+					NewHeight = (int)Math.Round((decimal)(NewHeight * outputter.scaling));
+				}
+
+				bool dimensionsDiffer = false;
+				if (outputInfo.Exists)
+				{
+					using (var bb = new System.Drawing.Bitmap(outputInfo.FullName))
+					{
+						dimensionsDiffer = bb == null || bb.Width != NewWidth || bb.Height != NewHeight;
+					}
+				}
+
+
+				if (!outputInfo.Exists) {
+					monitor.Log.WriteLine ("   --> PNG is new : " + outputPath);
+				}
+				else if (dimensionsDiffer)
+				{
+					monitor.Log.WriteLine("   --> PNG is a different size: " + outputPath);		// If the dimensions are different then generate
+				} else if (outputInfo.LastWriteTimeUtc > inputInfo.LastWriteTimeUtc) {
+					monitor.Log.WriteLine ("   --> PNG is up-to-date: " + outputPath);        // Assumes color, size are in the file name so no changes there
+					return;
+				} else {
+					// Assumes color, size are in the file name so no changes there
+					monitor.Log.WriteLine ("   --> PNG is older: " + outputPath + " " + (inputInfo.LastWriteTimeUtc - outputInfo.LastWriteTimeUtc).TotalMinutes + " minutes");
 				}
 
 				monitor.Log.WriteLine ("Generating {0} Origional Size: {1}x{2} New Size: {3}x{4}", outputPath, OrigionalWidth, OrigionalHeight, NewWidth, NewHeight);
