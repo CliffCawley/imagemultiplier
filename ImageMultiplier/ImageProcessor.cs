@@ -71,8 +71,8 @@ namespace ImageMultiplier
 					return;
 				}
 
-				var OrigionalWidth = svgDocument.Bounds.Width;
-				var OrigionalHeight = svgDocument.Bounds.Height;
+				var OriginalWidth = svgDocument.ViewBox.Width;
+				var OriginalHeight = svgDocument.ViewBox.Height;
 				int? NewWidth = null;
 				int? NewHeight = null;
 
@@ -85,16 +85,16 @@ namespace ImageMultiplier
 				else if (outputter.width != null)
 				{
 					NewWidth = outputter.width;
-					NewHeight = (int)Math.Round((decimal)(OrigionalHeight * (outputter.width / OrigionalWidth)));
+					NewHeight = (int)Math.Round((decimal)(OriginalHeight * (outputter.width / OriginalWidth)));
 				}
 				else if (outputter.height != null)
 				{
 					NewWidth = outputter.height;
-					NewHeight = (int)Math.Round((decimal)(OrigionalWidth * (outputter.height / OrigionalHeight)));
+					NewHeight = (int)Math.Round((decimal)(OriginalWidth * (outputter.height / OriginalHeight)));
 				}
 				else {
-					NewWidth = (int)Math.Round(OrigionalWidth);
-					NewHeight = (int)Math.Round(OrigionalHeight);
+					NewWidth = (int)Math.Round(OriginalWidth);
+					NewHeight = (int)Math.Round(OriginalHeight);
 				}
 
 				//Scale the Image
@@ -128,7 +128,7 @@ namespace ImageMultiplier
 					monitor.Log.WriteLine ("   --> PNG is older: " + outputPath + " " + (inputInfo.LastWriteTimeUtc - outputInfo.LastWriteTimeUtc).TotalMinutes + " minutes");
 				}
 
-				monitor.Log.WriteLine ("Generating {0} Origional Size: {1}x{2} New Size: {3}x{4}", outputPath, OrigionalWidth, OrigionalHeight, NewWidth, NewHeight);
+				monitor.Log.WriteLine ("Generating {0} Original Size: {1}x{2} New Size: {3}x{4}", outputPath, OriginalWidth, OriginalHeight, NewWidth, NewHeight);
 
 				if (NewWidth != null)
 					svgDocument.Width = new SvgUnit (SvgUnitType.Pixel, (int)NewWidth);
