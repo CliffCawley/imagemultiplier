@@ -30,7 +30,7 @@
 		</MimeType>
 	</Extension>
 
-	<Extension path="/MonoDevelop/SourceEditor2/SyntaxModes2">
+	<Extension path="/MonoDevelop/SourceEditor2/SyntaxModes">
 		<Templates resource="ImageMultiplier.ImageMultiplierSyntax.xml"/>
 	</Extension>
 
